@@ -105,12 +105,10 @@ def generate_end_leaderboard(current_game_kills: dict, base_total_kills):
     # Sort by kill count (descending) and take top 3
     top = sorted(filtered.items(), key=lambda x: x[1], reverse=True)[:1]
     topname = top[0]
-    # Sum all kills in JSON + base_total_kills
-    total_kills = sum(current_game_kills.values()) + base_total_kills
 
     # Build the output as a list of strings
     lines = ["⚡💀 MOST ZEUSED PLAYER 💀⚡"]
-    lines.append(topname)
+    lines.append(topname + ": " + current_game_kills[topname])
 
     return lines
 
