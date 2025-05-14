@@ -65,16 +65,17 @@ def writeRandomLineAndSay(name):
 
 import json
 
-def generate_leaderboard(leaderboard_path, current_game_kills, base_total_kills):
+def generate_halftime_leaderboard(current_game_kills: dict, base_total_kills):
     # Load the all-time leaderboard from the JSON file
+    leaderboard_path = "zeus_kills.json"
     with open(leaderboard_path, 'r', encoding='utf-8') as f:
         leaderboard_dict = json.load(f)
 
     # Filter for only players in the current game
     filtered = {
-        name: leaderboard_dict[name]
+        name: current_game_kills[name]
         for name in current_game_kills
-        if name in leaderboard_dict
+        if name in current_game_kills.keys()
     }
 
     # Sort by kill count (descending) and take top 3
@@ -91,12 +92,44 @@ def generate_leaderboard(leaderboard_path, current_game_kills, base_total_kills)
 
     return lines
 
-def sendLeaderboard(current_game_kills):
+
+def generate_end_leaderboard(current_game_kills: dict, base_total_kills):
+
+    # Filter for only players in the current game
+    filtered = {
+        name: current_game_kills[name]
+        for name in current_game_kills
+        if name in current_game_kills.keys()
+    }
+
+    # Sort by kill count (descending) and take top 3
+    top = sorted(filtered.items(), key=lambda x: x[1], reverse=True)[:1]
+    topname = top[0]
+    # Sum all kills in JSON + base_total_kills
+    total_kills = sum(current_game_kills.values()) + base_total_kills
+
+    # Build the output as a list of strings
+    lines = ["⚡💀 MOST ZEUSED PLAYER 💀⚡"]
+    lines.append(topname)
+
+    return lines
+
+
+
+def sendHalfLeaderboard(current_game_kills):
     if not len(current_game_kills) == 0:
         hardcoded_base_kills = 294  # Your base number
-        lines_to_print = generate_leaderboard("zeus_kills.json", current_game_kills, hardcoded_base_kills)
+        lines_to_print = generate_halftime_leaderboard( current_game_kills, hardcoded_base_kills)
         for line in lines_to_print:
             write_command("say " + str(line))
             press_key_noDelay()
 
+
+def sendEndLeaderboard(current_game_kills):
+    if not len(current_game_kills) == 0:
+        hardcoded_base_kills = 294  # Your base number
+        lines_to_print = generate_end_leaderboard( current_game_kills, hardcoded_base_kills)
+        for line in lines_to_print:
+            write_command("say " + str(line))
+            press_key_noDelay()
 

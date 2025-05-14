@@ -12,8 +12,8 @@ import threading
 import os
 from PIL import ImageGrab
 import ctypes
-from sending import writeRandomLineAndSay
-from sending import sendLeaderboard
+from sending import writeRandomLineAndSay, sendEndLeaderboard, sendHalfLeaderboard
+
 
 # ==== Configuration ====
 PLAYER_NAME = "Cedar Creek Vent Technician"
@@ -153,11 +153,11 @@ class GSIHandler(BaseHTTPRequestHandler):
 
 		if map_phase == "intermission" and last_map_phase != "intermission":
 			print("[Match] Halftime reached.")
-			sendLeaderboard(match_kill_log.keys())
+			sendHalfLeaderboard(match_kill_log.keys())
 
 		if map_phase == "gameover" and last_map_phase != "gameover":
 			print("[Match] Game over.")
-			sendLeaderboard(match_kill_log.keys())
+			sendEndLeaderboard(match_kill_log.keys())
 			time.sleep(5)
 			match_kill_log.clear()
 
