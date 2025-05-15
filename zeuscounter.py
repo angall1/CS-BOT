@@ -15,7 +15,6 @@ import ctypes
 from sending import writeRandomLineAndSay, sendEndLeaderboard, sendHalfLeaderboard
 
 
-from chatgpt import ask_chatgpt
 
 # ==== Configuration ====
 PLAYER_NAME = "Cedar Creek Vent Technician"

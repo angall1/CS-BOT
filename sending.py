@@ -99,6 +99,11 @@ def writeRandomLineAndSay(name):
     press_key()
 
 
+def sendMessage(content):
+    #print(content)
+    write_command("say " + content)
+    press_key()
+
 import json
 
 def generate_halftime_leaderboard(current_game_kills: dict, base_total_kills):
