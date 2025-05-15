@@ -153,11 +153,11 @@ class GSIHandler(BaseHTTPRequestHandler):
 
 		if map_phase == "intermission" and last_map_phase != "intermission":
 			print("[Match] Halftime reached.")
-			sendHalfLeaderboard(match_kill_log.keys())
+			sendHalfLeaderboard(match_kill_log)
 
 		if map_phase == "gameover" and last_map_phase != "gameover":
 			print("[Match] Game over.")
-			sendEndLeaderboard(match_kill_log.keys())
+			sendEndLeaderboard(match_kill_log)
 			time.sleep(5)
 			match_kill_log.clear()
 
