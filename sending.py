@@ -85,7 +85,7 @@ def generate_halftime_leaderboard(current_game_kills: dict, base_total_kills):
     total_kills = sum(leaderboard_dict.values()) + base_total_kills
 
     # Build the output as a list of strings
-    lines = ["-- LEADERBOARD --"]
+    lines = ["⚡💀 ZEUS LEADERBOARD 💀⚡"]
     for name, count in top_3:
         lines.append(f"{name}: {count}")
     lines.append(f"Total kills: {total_kills}")
