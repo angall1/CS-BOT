@@ -94,21 +94,23 @@ def generate_halftime_leaderboard(current_game_kills: dict, base_total_kills):
 
 
 def generate_end_leaderboard(current_game_kills: dict, base_total_kills):
+    # (The base_total_kills argument isn’t used in this snippet—
+    #  you can remove it if it’s not needed.)
 
-    # Filter for only players in the current game
-    filtered = {
-        name: current_game_kills[name]
-        for name in current_game_kills
-        if name in current_game_kills.keys()
-    }
+    # Sort by kill count (descending) and take only the top player
+    top = sorted(current_game_kills.items(),
+                 key=lambda x: x[1],
+                 reverse=True)[:1]
 
-    # Sort by kill count (descending) and take top 3
-    top = sorted(filtered.items(), key=lambda x: x[1], reverse=True)[:1]
-    topname = top[0]
+    if not top:
+        return ["⚡💀 MOST ZEUSED PLAYER 💀⚡", "No kills this game"]
 
-    # Build the output as a list of strings
+    # Unpack the single tuple into name and kills
+    topname, topkills = top[0]
+
+    # Build the output
     lines = ["⚡💀 MOST ZEUSED PLAYER 💀⚡"]
-    lines.append(topname + ": " + current_game_kills[topname])
+    lines.append(f"{topname}: {topkills}")
 
     return lines
 
