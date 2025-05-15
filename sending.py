@@ -1,11 +1,16 @@
 import time
 import pyautogui
 import random
-
+import os
 
 EXEC_FILE= r"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\game\csgo\cfg\zeusSay.cfg"
 
 import random
+
+from dotenv import load_dotenv
+
+load_dotenv()
+OPENAI_KEY = os.getenv("OPENAI_KEY")
 
 
 rage_lines = [

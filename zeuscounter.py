@@ -14,7 +14,6 @@ from PIL import ImageGrab
 import ctypes
 from sending import writeRandomLineAndSay, sendEndLeaderboard, sendHalfLeaderboard
 
-
 # ==== Configuration ====
 PLAYER_NAME = "Cedar Creek Vent Technician"
 KNOWN_NAMES = [PLAYER_NAME]
