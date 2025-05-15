@@ -5,6 +5,7 @@ import time
 from chatgpt import ask_chatgpt
 from sending import sendMessage
 
+
 # Path to your console.log
 CONSOLE_LOG = r"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\game\csgo\console.log"
 

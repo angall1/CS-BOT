@@ -13,7 +13,7 @@ import os
 from PIL import ImageGrab
 import ctypes
 from sending import writeRandomLineAndSay, sendEndLeaderboard, sendHalfLeaderboard
-
+import log_reader
 
 
 # ==== Configuration ====
