@@ -13,7 +13,6 @@ import os
 from PIL import ImageGrab
 import ctypes
 from sending import writeRandomLineAndSay, sendEndLeaderboard, sendHalfLeaderboard
-import log_reader
 
 
 # ==== Configuration ====
@@ -97,7 +96,7 @@ def get_victim_name(img_color):
 			print(f"[!] Low-confidence victim detected (< 0.6). Image saved.")
 
 		corrected = correct_name(victim_name, victim_conf)
-		print(f"OCR Final Victim: '{victim_name}' (conf {victim_conf:.2f}) → Matched: '{corrected}'")
+		print(f"OCR Final Victim: '{victim_name}' (conf {victim_conf:.2f}) Matched: '{corrected}'")
 		return corrected
 	else:
 		print("[!] Player name not found or victim box not detected.")
@@ -125,14 +124,14 @@ def process_killfeed():
 		persistent_kill_log[victim] = persistent_kill_log.get(victim, 0) + 1
 		match_kill_log[victim] += 1
 		save_kill_log(persistent_kill_log)
-		print(f"[Zeus Kill] {victim} → {zeus_kill_log[victim]} (Total: {persistent_kill_log[victim]})")
-		writeRandomLineAndSay(victim)  # 👈 ADD THIS LINE
+		print(f"[Zeus Kill] {victim} {zeus_kill_log[victim]} (Total: {persistent_kill_log[victim]})")
+		writeRandomLineAndSay(victim) 
 	else:
 		print("[?] Zeus kill detected, but victim not recognized.")
 		cv2.imwrite(f"killfeed_{ts}.png", frame)
 
 # ==== CS2 GSI HTTP Listener ====
-
+map_name = "cs_nuke"
 class GSIHandler(BaseHTTPRequestHandler):
 	def do_POST(self):
 		global last_kills
@@ -151,6 +150,27 @@ class GSIHandler(BaseHTTPRequestHandler):
 
 		# Detect halftime or game end
 		map_phase = data.get("map", {}).get("phase", "").lower()
+		map_name = data.get('map', {}).get('name')
+
+		if map_name:
+			#print(f"Current map is {map_name}")
+
+			# Persist to JSON
+			try:
+				cfg_path = os.path.join(os.path.dirname(__file__), "playerbalances.json")
+				# load existing config (or start fresh)
+				if os.path.exists(cfg_path):
+					with open(cfg_path, "r", encoding="utf-8") as f:
+						cfg = json.load(f)
+				else:
+					cfg = {}
+				# update map entry
+				cfg["cs_mapname"] = map_name
+				# write it back
+				with open(cfg_path, "w", encoding="utf-8") as f:
+					json.dump(cfg, f, indent=4)
+			except Exception as e:
+				print(f"Failed to write map to JSON: {e}")
 
 		if map_phase == "intermission" and last_map_phase != "intermission":
 			print("[Match] Halftime reached.")
@@ -175,7 +195,7 @@ class GSIHandler(BaseHTTPRequestHandler):
 				break
 
 		if kills > last_kills and active_weapon == "weapon_taser":
-			print(f"⚡ Zeus kill detected! Total kills: {kills}")
+			print(f"Zeus kill detected! Total kills: {kills}")
 			time.sleep(0.5)
 			process_killfeed()
 
@@ -196,4 +216,8 @@ def run_server():
 	server.serve_forever()
 
 if __name__ == '__main__':
-	run_server()
+	threading.Thread(target=run_server, daemon=True).start()
+
+	# Keep the main thread alive so the daemon thread doesn't exit immediately
+	while True:
+		time.sleep(1)

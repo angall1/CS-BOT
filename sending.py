@@ -31,7 +31,7 @@ rage_lines = [
     "Electric smackdown had {name} begging for mercy. LOL.",
     "My stun gun vs. your life, {name}. Guess who won?",
     "Short-circuited {name} before they could blink. Ouch.",
-    "Battery’s still full; {name} already dead. Too easy.",
+    "Battery’s still full, {name} already dead. Too easy.",
     "No armor saved you, {name}. You got flash-fried.",
     "{name}, you got vaporized harder than your browser tabs.",
     "Need a charger, {name}? Because you’re out of juice now.",
@@ -48,8 +48,8 @@ rage_lines = [
     "Zap so hard it broke your self-esteem, {name}.",
     "Your K/D ratio just got reset by a spark, {name}.",
     "I’m the electric boogaloo and {name} is the punchline.",
-    "Your gun’s on cooldown, {name}; my volts never sleep.",
-    "Shock therapy courtesy of me; {name} owes me a thank you.",
+    "Your gun’s on cooldown, {name}, my volts never sleep.",
+    "Shock therapy courtesy of me, {name} owes me a thank you.",
     "That electro-blast was the highlight of my day, {name}.",
     "Gravity met electricity and {name} met the floor.",
     "My lightning finger targeted you, {name}, and you dropped.",
@@ -77,6 +77,29 @@ rage_lines = [
 ]
 
 
+
+import threading
+import queue
+import time
+import pyautogui
+_message_queue = queue.Queue()
+
+def _sender_worker():
+	"""Background thread pulls lines from the queue, writes the cfg, presses the key."""
+	while True:
+		line = _message_queue.get()      # wait for sendMessage() to enqueue
+		# write the "say" command into the config file
+		with open(EXEC_FILE, 'w', encoding='utf-8') as f:
+			f.write(f"say {line}")
+		# send it to CS:GO
+		pyautogui.press('multiply')
+		# throttle pacing (adjust 0.2s if needed)
+		time.sleep(0.2)
+		_message_queue.task_done()
+
+# kick off the background thread once
+threading.Thread(target=_sender_worker, daemon=True).start()
+
 def write_command(command):
     with open(EXEC_FILE, 'w', encoding='utf-8') as f:
         f.write(command)
@@ -99,10 +122,9 @@ def writeRandomLineAndSay(name):
     press_key()
 
 
-def sendMessage(content):
-    #print(content)
-    write_command("say " + content)
-    press_key()
+def sendMessage(content: str):
+	"""Enqueue a line for the background sender to process."""
+	_message_queue.put(content)
 
 import json
 
